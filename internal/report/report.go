@@ -133,7 +133,7 @@ func (r *Reporter) generateMigrationDetails(report *preprocessor.AnalysisReport)
 	groupedDetails := r.groupDetailsByAction(report.MigrationDetails)
 
 	for action, details := range groupedDetails {
-		builder.WriteString(fmt.Sprintf("\n%s Actions (%d):\n", strings.Title(action), len(details)))
+		builder.WriteString(fmt.Sprintf("\n%s Actions (%d):\n", capitalize(action), len(details)))
 		builder.WriteString(strings.Repeat("-", len(action)+15) + "\n")
 
 		for i, detail := range details {
@@ -197,4 +197,12 @@ func (r *Reporter) generateFooter(report *preprocessor.AnalysisReport) string {
 	builder.WriteString("================================================================================\n")
 
 	return builder.String()
+}
+
+// capitalize returns a string with the first character capitalized
+func capitalize(s string) string {
+	if s == "" {
+		return s
+	}
+	return strings.ToUpper(s[:1]) + s[1:]
 }

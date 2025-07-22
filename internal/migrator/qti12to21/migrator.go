@@ -467,9 +467,7 @@ func (m *Migrator12to21) migrateFeedback(feedback *models.Feedback) models.Feedb
 		migratedFeedback.Material = feedback.Material
 	}
 
-	for _, flowMat := range feedback.FlowMat {
-		migratedFeedback.FlowMat = append(migratedFeedback.FlowMat, flowMat)
-	}
+	migratedFeedback.FlowMat = append(migratedFeedback.FlowMat, feedback.FlowMat...)
 
 	return migratedFeedback
 }
