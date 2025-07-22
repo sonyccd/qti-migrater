@@ -59,12 +59,42 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Check for docs-only changes
+      id: docs_check
+      run: |
+        # Get list of changed files
+        CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD || echo "")
+        echo "Changed files: $CHANGED_FILES"
+        
+        # Check if all changes are in docs/ directory
+        DOCS_ONLY=true
+        if [ -n "$CHANGED_FILES" ]; then
+          for file in $CHANGED_FILES; do
+            if [[ ! $file =~ ^docs/ ]]; then
+              DOCS_ONLY=false
+              break
+            fi
+          done
+        fi
+        
+        echo "docs_only=$DOCS_ONLY" >> $GITHUB_OUTPUT
+        echo "Docs only changes: $DOCS_ONLY"
+
+    - name: Skip release for docs-only changes
+      if: steps.docs_check.outputs.docs_only == 'true'
+      run: |
+        echo "🚫 Skipping release creation - only documentation files were changed."
+        echo "Changes detected in docs/ directory only."
+        exit 0
+
     - name: Set up Go
+      if: steps.docs_check.outputs.docs_only != 'true'
       uses: actions/setup-go@v4
       with:
         go-version: '1.21'
 
     - name: Cache Go modules
+      if: steps.docs_check.outputs.docs_only != 'true'
       uses: actions/cache@v4
       with:
         path: ~/go/pkg/mod
@@ -73,6 +103,7 @@ jobs:
           ${{ runner.os }}-go-
 
     - name: Determine version
+      if: steps.docs_check.outputs.docs_only != 'true'
       id: version
       run: |
         # Get the latest tag or use v0.0.0 if no tags exist
@@ -91,6 +122,7 @@ jobs:
         echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
     - name: Build cross-platform binaries
+      if: steps.docs_check.outputs.docs_only != 'true'
       run: |
         # Create output directory
         mkdir -p dist
@@ -125,6 +157,7 @@ jobs:
         ls -la
 
     - name: Create Release
+      if: steps.docs_check.outputs.docs_only != 'true'
       id: create_release
       uses: actions/create-release@v1
       env:
@@ -146,6 +179,7 @@ jobs:
         prerelease: false
 
     - name: Upload Linux AMD64
+      if: steps.docs_check.outputs.docs_only != 'true'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -156,6 +190,7 @@ jobs:
         asset_content_type: application/gzip
 
     - name: Upload Linux ARM64
+      if: steps.docs_check.outputs.docs_only != 'true'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -166,6 +201,7 @@ jobs:
         asset_content_type: application/gzip
 
     - name: Upload Windows AMD64
+      if: steps.docs_check.outputs.docs_only != 'true'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -176,6 +212,7 @@ jobs:
         asset_content_type: application/zip
 
     - name: Upload Windows ARM64
+      if: steps.docs_check.outputs.docs_only != 'true'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -186,6 +223,7 @@ jobs:
         asset_content_type: application/zip
 
     - name: Upload macOS AMD64
+      if: steps.docs_check.outputs.docs_only != 'true'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -196,6 +234,7 @@ jobs:
         asset_content_type: application/gzip
 
     - name: Upload macOS ARM64
+      if: steps.docs_check.outputs.docs_only != 'true'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

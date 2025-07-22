@@ -12,7 +12,9 @@
       "Bash(go install:*)",
       "Bash(golangci-lint run:*)",
       "Bash(git add:*)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)"
     ],
     "deny": []
   }
