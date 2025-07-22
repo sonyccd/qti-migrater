@@ -13,7 +13,10 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
 
@@ -34,12 +37,171 @@ jobs:
       run: go mod download
 
     - name: Run tests
-      run: make test
+      run: go test -v ./...
 
-    - name: Run linting
-      run: make lint
+    - name: Run linting (Linux only)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+        golangci-lint run
 
-  build:
+  build-and-release:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+
+    - name: Cache Go modules
+      uses: actions/cache@v4
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Determine version
+      id: version
+      run: |
+        # Get the latest tag or use v0.0.0 if no tags exist
+        LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+        echo "Latest tag: $LATEST_TAG"
+        
+        # Parse semantic version
+        VERSION=${LATEST_TAG#v}
+        IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+        
+        # Increment patch version
+        NEW_PATCH=$((PATCH + 1))
+        NEW_VERSION="v${MAJOR}.${MINOR}.${NEW_PATCH}"
+        
+        echo "New version: $NEW_VERSION"
+        echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+    - name: Build cross-platform binaries
+      run: |
+        # Create output directory
+        mkdir -p dist
+        
+        # Build for Linux
+        GOOS=linux GOARCH=amd64 go build -o dist/qti-migrator-linux-amd64 ./cmd/qti-migrator
+        GOOS=linux GOARCH=arm64 go build -o dist/qti-migrator-linux-arm64 ./cmd/qti-migrator
+        
+        # Build for Windows
+        GOOS=windows GOARCH=amd64 go build -o dist/qti-migrator-windows-amd64.exe ./cmd/qti-migrator
+        GOOS=windows GOARCH=arm64 go build -o dist/qti-migrator-windows-arm64.exe ./cmd/qti-migrator
+        
+        # Build for macOS
+        GOOS=darwin GOARCH=amd64 go build -o dist/qti-migrator-darwin-amd64 ./cmd/qti-migrator
+        GOOS=darwin GOARCH=arm64 go build -o dist/qti-migrator-darwin-arm64 ./cmd/qti-migrator
+
+    - name: Create release packages
+      run: |
+        cd dist
+        
+        # Create tar.gz for Linux and macOS
+        tar -czf qti-migrator-linux-amd64.tar.gz qti-migrator-linux-amd64
+        tar -czf qti-migrator-linux-arm64.tar.gz qti-migrator-linux-arm64
+        tar -czf qti-migrator-darwin-amd64.tar.gz qti-migrator-darwin-amd64
+        tar -czf qti-migrator-darwin-arm64.tar.gz qti-migrator-darwin-arm64
+        
+        # Create zip for Windows
+        zip qti-migrator-windows-amd64.zip qti-migrator-windows-amd64.exe
+        zip qti-migrator-windows-arm64.zip qti-migrator-windows-arm64.exe
+        
+        # List all files for verification
+        ls -la
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.version.outputs.version }}
+        release_name: Release ${{ steps.version.outputs.version }}
+        body: |
+          Automated release for commit ${{ github.sha }}
+          
+          ## Changes
+          View commit history since last release
+          
+          ## Downloads
+          - **Linux**: qti-migrator-linux-amd64.tar.gz (x64), qti-migrator-linux-arm64.tar.gz (ARM64)
+          - **Windows**: qti-migrator-windows-amd64.zip (x64), qti-migrator-windows-arm64.zip (ARM64)  
+          - **macOS**: qti-migrator-darwin-amd64.tar.gz (Intel), qti-migrator-darwin-arm64.tar.gz (Apple Silicon)
+        draft: false
+        prerelease: false
+
+    - name: Upload Linux AMD64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/qti-migrator-linux-amd64.tar.gz
+        asset_name: qti-migrator-linux-amd64.tar.gz
+        asset_content_type: application/gzip
+
+    - name: Upload Linux ARM64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/qti-migrator-linux-arm64.tar.gz
+        asset_name: qti-migrator-linux-arm64.tar.gz
+        asset_content_type: application/gzip
+
+    - name: Upload Windows AMD64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/qti-migrator-windows-amd64.zip
+        asset_name: qti-migrator-windows-amd64.zip
+        asset_content_type: application/zip
+
+    - name: Upload Windows ARM64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/qti-migrator-windows-arm64.zip
+        asset_name: qti-migrator-windows-arm64.zip
+        asset_content_type: application/zip
+
+    - name: Upload macOS AMD64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/qti-migrator-darwin-amd64.tar.gz
+        asset_name: qti-migrator-darwin-amd64.tar.gz
+        asset_content_type: application/gzip
+
+    - name: Upload macOS ARM64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/qti-migrator-darwin-arm64.tar.gz
+        asset_name: qti-migrator-darwin-arm64.tar.gz
+        asset_content_type: application/gzip
+
+  # Keep the original tagged release workflow
+  tagged-release:
     needs: test
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
@@ -60,10 +222,30 @@ jobs:
           ${{ runner.os }}-go-
 
     - name: Build cross-platform binaries
-      run: make build-all
+      run: |
+        mkdir -p dist
+        
+        # Build for Linux
+        GOOS=linux GOARCH=amd64 go build -o dist/qti-migrator-linux-amd64 ./cmd/qti-migrator
+        GOOS=linux GOARCH=arm64 go build -o dist/qti-migrator-linux-arm64 ./cmd/qti-migrator
+        
+        # Build for Windows
+        GOOS=windows GOARCH=amd64 go build -o dist/qti-migrator-windows-amd64.exe ./cmd/qti-migrator
+        GOOS=windows GOARCH=arm64 go build -o dist/qti-migrator-windows-arm64.exe ./cmd/qti-migrator
+        
+        # Build for macOS
+        GOOS=darwin GOARCH=amd64 go build -o dist/qti-migrator-darwin-amd64 ./cmd/qti-migrator
+        GOOS=darwin GOARCH=arm64 go build -o dist/qti-migrator-darwin-arm64 ./cmd/qti-migrator
 
     - name: Create release packages
-      run: make package
+      run: |
+        cd dist
+        tar -czf qti-migrator-linux-amd64.tar.gz qti-migrator-linux-amd64
+        tar -czf qti-migrator-linux-arm64.tar.gz qti-migrator-linux-arm64
+        tar -czf qti-migrator-darwin-amd64.tar.gz qti-migrator-darwin-amd64
+        tar -czf qti-migrator-darwin-arm64.tar.gz qti-migrator-darwin-arm64
+        zip qti-migrator-windows-amd64.zip qti-migrator-windows-amd64.exe
+        zip qti-migrator-windows-arm64.zip qti-migrator-windows-arm64.exe
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v2
