@@ -41,11 +41,19 @@ body {
 .desktop-icon:nth-child(3) { top: 20px; left: 220px; }
 .desktop-icon:nth-child(4) { top: 120px; left: 20px; }
 
-.desktop-icon img {
+.desktop-icon img, .desktop-icon .icon-text {
     width: 32px;
     height: 32px;
     display: block;
     margin: 0 auto 5px;
+}
+
+.desktop-icon .icon-text {
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 .desktop-icon span {
