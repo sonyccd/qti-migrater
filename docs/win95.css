@@ -40,6 +40,8 @@ body {
 .desktop-icon:nth-child(2) { top: 20px; left: 120px; }
 .desktop-icon:nth-child(3) { top: 20px; left: 220px; }
 .desktop-icon:nth-child(4) { top: 120px; left: 20px; }
+.desktop-icon:nth-child(5) { top: 120px; left: 120px; }
+.desktop-icon:nth-child(6) { top: 120px; left: 220px; }
 
 .desktop-icon img, .desktop-icon .icon-text {
     width: 32px;

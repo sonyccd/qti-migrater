@@ -21,6 +21,14 @@
             <div class="icon-text">⚙️</div>
             <span>Installation</span>
         </div>
+        <div class="desktop-icon" ondblclick="openWindow('help')">
+            <div class="icon-text">❓</div>
+            <span>Help</span>
+        </div>
+        <div class="desktop-icon" ondblclick="openWindow('qti-docs')">
+            <div class="icon-text">📚</div>
+            <span>QTI Docs</span>
+        </div>
         <div class="desktop-icon" ondblclick="openWindow('github')">
             <div class="icon-text">🌐</div>
  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAA7AAAAOwBeShxvQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAKySURBVFiFtZfPaxNBFMc/b2YzszuZTTZJ0zRNa60IRUQ8ePDgQS8ePHjw4EEP/gMePHjw4sGLFy8ePHjw4EEPIiJaUSsttmmatmk2m002yc7uzs7ODxPaTbKbNEYfDLzZN9/PvHnz3huBEIJJQgiBaZoTXjk5lFJomia0W7duMYvYsqzTQojrQoibhmHw5s0bfvz4gWVZsxgPANd1+fTp04l0hRCX7927B1JKxo8RI1JKrly5wtevX9ne3sZ13VkCAJBSous6586d48GDB9y+fbtft1Kp8PLlS+7fv8/BwcEfAQgh0DSNpaUlHj9+zOrq6pDOysoKT58+JZ/P8+rVKz5+/DgTACAKrKqqnD17lkePHrG8vDyi5zgOT548YX19nQ8fPlCv148NIJQsIIQgmUxy8+ZNbt26ha7rIz1ut9u8fv2ahYUFcrkcrutOHVsopYTQNI1EIkEikSCRSODz+fD5fKiqiqqqKIqCoiiEw2Hy+TzNZhPHcXAcB9u2sW0b0zQxTRPLsrAsC9M0GfcNRrOCZVlUKhUqlQqVSoVqtUq1WqVWq1Gr1ajX69TrdVqtFu12m263i23bU0c8bQDR/36/H7/fTzAYJBgMEgqFCIfDRKNRotEo8XiceDxOMpkklUpNPIdQ7AYMAZDL5cjn83z+/Jm1tTWy2SzBYPBPBzBCKKX6Rblc5u3bt2xublIoFGg0GlOPPzRAe1Iul9nY2CCbzZLL5djb22s7jjNzAMuy2N3dZXd3l52dnWK32/18KwwGZT8wQgh1Op1isVikVCqdmPy/FqVSqQgwJC+A/f39k5I/sdjf3y8Aw7kXwN7e3knJn1js7e0VgJOOgN/vJxAIjJStZQsABOIJgqZJo9FApRfcQaGXSuBSadKXJJlMomka7Xabbre7ApQBy8slsJaWlgJAZlAzbisBfgELJlH2WMNl3gAAAABJRU5ErkJggg==" alt="network">
@@ -38,16 +46,35 @@
             </div>
             <div class="window-body">
                 <h1>QTI Migrator</h1>
-                <p>A powerful command-line tool for migrating QTI (Question and Test Interoperability) content between different platforms and formats.</p>
+                <p>A powerful, cross-platform command-line tool for migrating QTI (Question and Test Interoperability) content between different versions and formats.</p>
                 
                 <div class="inset-panel">
                     <p><strong>Version:</strong> 1.0.0</p>
                     <p><strong>Author:</strong> QTI Migration Team</p>
-                    <p><strong>License:</strong> MIT</p>
+                    <p><strong>License:</strong> MIT License</p>
+                    <p><strong>Language:</strong> Go</p>
+                    <p><strong>Platforms:</strong> Windows, macOS, Linux</p>
                 </div>
                 
                 <h2>What is QTI?</h2>
-                <p>QTI (Question and Test Interoperability) is an international standard that enables the exchange of assessment content and results between different systems. QTI Migrator helps you convert and migrate your QTI content seamlessly.</p>
+                <p>QTI (Question and Test Interoperability) is an international standard developed by IMS Global Learning Consortium that enables the exchange of assessment content and results between different learning management systems and educational platforms.</p>
+                
+                <h3>Supported QTI Versions</h3>
+                <ul>
+                    <li><strong>QTI 1.2</strong> - Legacy format, widely deployed</li>
+                    <li><strong>QTI 2.1</strong> - Stable, comprehensive feature set</li>
+                    <li><strong>QTI 2.2</strong> - Enhanced accessibility and adaptive testing</li>
+                    <li><strong>QTI 3.0</strong> - Latest specification with modern features</li>
+                </ul>
+                
+                <h3>Why Use QTI Migrator?</h3>
+                <ul>
+                    <li>Seamless migration between QTI versions</li>
+                    <li>Batch processing for large content libraries</li>
+                    <li>Content validation and error reporting</li>
+                    <li>Preserves assessment logic and metadata</li>
+                    <li>Command-line automation support</li>
+                </ul>
                 
                 <div class="status-bar">
                     <span>Cross-platform CLI tool written in Go</span>
@@ -119,21 +146,39 @@
                 </div>
             </div>
             <div class="window-body">
-                <h1>Installation</h1>
+                <h1>Installation Guide</h1>
+                <p>Multiple installation options to get QTI Migrator running on your system.</p>
                 
-                <h2>Download Binary</h2>
-                <p>Download the latest release for your platform:</p>
+                <h2>📦 Download Pre-built Binary</h2>
+                <p>The easiest way to get started. Download the appropriate binary for your platform:</p>
                 <div class="field-row">
-                    <button onclick="window.open('https://github.com/sonyccd/qti-migrator/releases')">Download Latest Release</button>
+                    <button onclick="window.open('https://github.com/sonyccd/qti-migrator/releases')">📥 Download Latest Release</button>
                 </div>
                 
-                <h2>Install via Go</h2>
+                <h3>Platform-specific Instructions</h3>
+                <div class="inset-panel">
+                    <p><strong>Windows:</strong> Download qti-migrator-windows-amd64.exe and add to PATH</p>
+                    <p><strong>macOS:</strong> Download qti-migrator-darwin-amd64 and make executable</p>
+                    <p><strong>Linux:</strong> Download qti-migrator-linux-amd64 and make executable</p>
+                </div>
+                
+                <h2>🚀 Install via Go</h2>
+                <p>If you have Go installed (version 1.19 or later required):</p>
                 <div class="code-block">go install github.com/sonyccd/qti-migrator@latest</div>
                 
-                <h2>Build from Source</h2>
+                <h2>🔧 Build from Source</h2>
+                <p>For developers or custom builds:</p>
                 <div class="code-block">git clone https://github.com/sonyccd/qti-migrator.git
 cd qti-migrator
-go build -o qti-migrator ./cmd/main.go</div>
+go build -o qti-migrator ./cmd/qti-migrator/main.go</div>
+                
+                <h2>✅ Verify Installation</h2>
+                <p>Test that QTI Migrator is installed correctly:</p>
+                <div class="code-block"># Check version
+qti-migrator --version
+
+# Show help
+qti-migrator --help</div>
                 
                 <h2>Usage Examples</h2>
                 <div class="code-block"># Convert QTI 1.2 to QTI 2.1
@@ -190,6 +235,239 @@ qti-migrator batch --input-dir ./assessments --output-dir ./converted --to qti22
                 <h2>Clone Repository</h2>
                 <div class="code-block">git clone https://github.com/sonyccd/qti-migrator.git</div>
                 <button onclick="copyToClipboard('git clone https://github.com/sonyccd/qti-migrator.git')">Copy</button>
+            </div>
+        </div>
+        
+        <div id="help" class="window">
+            <div class="title-bar">
+                <div class="title-bar-text">QTI Migrator Help</div>
+                <div class="title-bar-controls">
+                    <button onclick="minimizeWindow('help')">_</button>
+                    <button onclick="closeWindow('help')">X</button>
+                </div>
+            </div>
+            <div class="window-body">
+                <h1>Help Center</h1>
+                <p>Comprehensive guide to using QTI Migrator effectively.</p>
+                
+                <div class="tabs">
+                    <div id="help-tab-basics" class="tab active" onclick="switchTab('help-tab-basics', 'help-content-basics')">Getting Started</div>
+                    <div id="help-tab-commands" class="tab" onclick="switchTab('help-tab-commands', 'help-content-commands')">Commands</div>
+                    <div id="help-tab-examples" class="tab" onclick="switchTab('help-tab-examples', 'help-content-examples')">Examples</div>
+                    <div id="help-tab-troubleshoot" class="tab" onclick="switchTab('help-tab-troubleshoot', 'help-content-troubleshoot')">Troubleshooting</div>
+                </div>
+                
+                <div id="help-content-basics" class="tab-content">
+                    <h2>What is QTI Migrator?</h2>
+                    <p>QTI Migrator is a command-line tool designed to help educators and developers migrate Question and Test Interoperability (QTI) content between different versions and formats.</p>
+                    
+                    <h3>Key Benefits</h3>
+                    <ul>
+                        <li><strong>Version Migration:</strong> Convert between QTI 1.2, 2.0, 2.1, 2.2, and 3.0</li>
+                        <li><strong>Format Support:</strong> Handle XML, JSON, and Common Cartridge formats</li>
+                        <li><strong>Batch Processing:</strong> Process multiple files or entire directories</li>
+                        <li><strong>Validation:</strong> Verify QTI content integrity before and after migration</li>
+                        <li><strong>Cross-Platform:</strong> Works on Windows, macOS, and Linux</li>
+                    </ul>
+                    
+                    <h3>Quick Start</h3>
+                    <div class="code-block"># Validate a QTI file
+qti-migrator validate assessment.xml
+
+# Convert QTI 1.2 to 2.1
+qti-migrator convert --input quiz.xml --output quiz_v21.xml --from qti12 --to qti21</div>
+                </div>
+                
+                <div id="help-content-commands" class="tab-content" style="display: none;">
+                    <h2>Command Reference</h2>
+                    
+                    <h3>Global Options</h3>
+                    <ul>
+                        <li><code>--help, -h</code> - Show help information</li>
+                        <li><code>--version, -v</code> - Show version information</li>
+                        <li><code>--verbose</code> - Enable verbose output</li>
+                        <li><code>--quiet</code> - Suppress output except errors</li>
+                    </ul>
+                    
+                    <h3>convert</h3>
+                    <p>Convert QTI content between versions and formats.</p>
+                    <div class="code-block">qti-migrator convert [options] --input FILE --output FILE</div>
+                    <ul>
+                        <li><code>--input, -i FILE</code> - Input file path (required)</li>
+                        <li><code>--output, -o FILE</code> - Output file path (required)</li>
+                        <li><code>--from VERSION</code> - Source QTI version (auto-detected if not specified)</li>
+                        <li><code>--to VERSION</code> - Target QTI version (required)</li>
+                        <li><code>--format FORMAT</code> - Output format: xml, json, cc (default: xml)</li>
+                    </ul>
+                    
+                    <h3>validate</h3>
+                    <p>Validate QTI content against specification schemas.</p>
+                    <div class="code-block">qti-migrator validate [options] FILE</div>
+                    <ul>
+                        <li><code>--version VERSION</code> - QTI version to validate against</li>
+                        <li><code>--schema FILE</code> - Custom schema file</li>
+                    </ul>
+                    
+                    <h3>batch</h3>
+                    <p>Process multiple files in batch mode.</p>
+                    <div class="code-block">qti-migrator batch [options] --input-dir DIR --output-dir DIR</div>
+                    <ul>
+                        <li><code>--input-dir DIR</code> - Input directory</li>
+                        <li><code>--output-dir DIR</code> - Output directory</li>
+                        <li><code>--pattern GLOB</code> - File pattern to match (default: *.xml)</li>
+                        <li><code>--to VERSION</code> - Target QTI version</li>
+                    </ul>
+                </div>
+                
+                <div id="help-content-examples" class="tab-content" style="display: none;">
+                    <h2>Usage Examples</h2>
+                    
+                    <h3>Basic Conversion</h3>
+                    <div class="code-block"># Convert a single assessment from QTI 1.2 to 2.1
+qti-migrator convert -i old_quiz.xml -o new_quiz.xml --from qti12 --to qti21
+
+# Auto-detect source version and convert to QTI 3.0
+qti-migrator convert -i assessment.xml -o assessment_v3.xml --to qti30</div>
+                    
+                    <h3>Batch Operations</h3>
+                    <div class="code-block"># Convert all XML files in a directory
+qti-migrator batch --input-dir ./assessments --output-dir ./converted --to qti21
+
+# Process only specific files
+qti-migrator batch --input-dir ./tests --output-dir ./updated --pattern "*_test.xml" --to qti22</div>
+                    
+                    <h3>Validation</h3>
+                    <div class="code-block"># Validate against auto-detected version
+qti-migrator validate quiz.xml
+
+# Validate against specific QTI version
+qti-migrator validate --version qti21 assessment.xml</div>
+                    
+                    <h3>Format Conversion</h3>
+                    <div class="code-block"># Convert QTI to JSON format
+qti-migrator convert -i quiz.xml -o quiz.json --to qti21 --format json
+
+# Create Common Cartridge package
+qti-migrator convert -i assessment.xml -o package.zip --to qti21 --format cc</div>
+                </div>
+                
+                <div id="help-content-troubleshoot" class="tab-content" style="display: none;">
+                    <h2>Troubleshooting</h2>
+                    
+                    <h3>Common Issues</h3>
+                    
+                    <h4>Schema Validation Errors</h4>
+                    <p><strong>Problem:</strong> File fails validation with schema errors.</p>
+                    <p><strong>Solution:</strong> Use <code>--verbose</code> flag to see detailed error messages:</p>
+                    <div class="code-block">qti-migrator validate --verbose problematic_file.xml</div>
+                    
+                    <h4>Unsupported QTI Version</h4>
+                    <p><strong>Problem:</strong> "Unsupported QTI version" error.</p>
+                    <p><strong>Solution:</strong> Check supported versions and specify explicitly:</p>
+                    <div class="code-block">qti-migrator convert -i file.xml -o output.xml --from qti12 --to qti21</div>
+                    
+                    <h4>Media Files Missing</h4>
+                    <p><strong>Problem:</strong> Referenced images or media files not found.</p>
+                    <p><strong>Solution:</strong> Ensure all referenced files are in the same directory or use absolute paths.</p>
+                    
+                    <h3>Getting Help</h3>
+                    <ul>
+                        <li>Run <code>qti-migrator --help</code> for command-specific help</li>
+                        <li>Use <code>--verbose</code> flag for detailed processing information</li>
+                        <li>Check the GitHub repository for issue reporting and documentation</li>
+                        <li>Review QTI specification documentation for format requirements</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div id="qti-docs" class="window">
+            <div class="title-bar">
+                <div class="title-bar-text">QTI Documentation</div>
+                <div class="title-bar-controls">
+                    <button onclick="minimizeWindow('qti-docs')">_</button>
+                    <button onclick="closeWindow('qti-docs')">X</button>
+                </div>
+            </div>
+            <div class="window-body">
+                <h1>QTI Specifications & Documentation</h1>
+                <p>Links to official QTI specifications and related documentation.</p>
+                
+                <h2>Official QTI Specifications</h2>
+                
+                <div class="inset-panel">
+                    <h3>🔗 QTI 3.0 (Latest)</h3>
+                    <p>The most current version of the QTI specification with enhanced features and improved interoperability.</p>
+                    <div class="field-row">
+                        <button onclick="window.open('https://www.imsglobal.org/spec/qti/v3p0/', '_blank')">QTI 3.0 Specification</button>
+                        <button onclick="window.open('https://www.imsglobal.org/spec/qti/v3p0/impl', '_blank')">Implementation Guide</button>
+                    </div>
+                </div>
+                
+                <div class="inset-panel">
+                    <h3>🔗 QTI 2.2</h3>
+                    <p>Widely adopted version with comprehensive assessment capabilities and good tool support.</p>
+                    <div class="field-row">
+                        <button onclick="window.open('https://www.imsglobal.org/spec/qti/v2p2/', '_blank')">QTI 2.2 Specification</button>
+                        <button onclick="window.open('https://www.imsglobal.org/spec/qti/v2p2/impl', '_blank')">Implementation Guide</button>
+                    </div>
+                </div>
+                
+                <div class="inset-panel">
+                    <h3>🔗 QTI 2.1</h3>
+                    <p>Stable version with broad compatibility across learning management systems.</p>
+                    <div class="field-row">
+                        <button onclick="window.open('https://www.imsglobal.org/spec/qti/v2p1/', '_blank')">QTI 2.1 Specification</button>
+                        <button onclick="window.open('https://www.imsglobal.org/spec/qti/v2p1/impl', '_blank')">Implementation Guide</button>
+                    </div>
+                </div>
+                
+                <div class="inset-panel">
+                    <h3>🔗 QTI 1.2 (Legacy)</h3>
+                    <p>Original QTI specification, still in use by some legacy systems.</p>
+                    <div class="field-row">
+                        <button onclick="window.open('https://www.imsglobal.org/spec/qti/v1p2/', '_blank')">QTI 1.2 Specification</button>
+                    </div>
+                </div>
+                
+                <h2>Additional Resources</h2>
+                
+                <h3>IMS Global Learning Consortium</h3>
+                <ul>
+                    <li><a href="https://www.imsglobal.org/" target="_blank">IMS Global Homepage</a></li>
+                    <li><a href="https://www.imsglobal.org/spec/qti/" target="_blank">QTI Specification Overview</a></li>
+                    <li><a href="https://www.imsglobal.org/certification/qti/" target="_blank">QTI Conformance Certification</a></li>
+                </ul>
+                
+                <h3>Development Resources</h3>
+                <ul>
+                    <li><a href="https://www.imsglobal.org/spec/qti/v3p0/schemas/" target="_blank">QTI 3.0 XML Schemas</a></li>
+                    <li><a href="https://www.imsglobal.org/spec/qti/v2p2/schemas/" target="_blank">QTI 2.2 XML Schemas</a></li>
+                    <li><a href="https://github.com/IMSGlobal/qti-examples" target="_blank">QTI Example Files</a></li>
+                    <li><a href="https://www.imsglobal.org/developers" target="_blank">Developer Resources</a></li>
+                </ul>
+                
+                <h3>Migration Notes</h3>
+                <div class="inset-panel">
+                    <h4>Version Compatibility</h4>
+                    <ul>
+                        <li><strong>QTI 1.2 → 2.x:</strong> Significant structural changes, requires careful migration</li>
+                        <li><strong>QTI 2.1 → 2.2:</strong> Minor changes, mostly backward compatible</li>
+                        <li><strong>QTI 2.x → 3.0:</strong> Major revision with new features and some breaking changes</li>
+                    </ul>
+                    
+                    <h4>Key Differences</h4>
+                    <ul>
+                        <li><strong>QTI 3.0:</strong> Enhanced accessibility, improved question types, better scoring</li>
+                        <li><strong>QTI 2.2:</strong> Adaptive testing improvements, enhanced metadata</li>
+                        <li><strong>QTI 2.1:</strong> Stable foundation with comprehensive item and test support</li>
+                        <li><strong>QTI 1.2:</strong> Basic question and assessment structure</li>
+                    </ul>
+                </div>
+                
+                <div class="status-bar">
+                    <span>Always validate content after migration between QTI versions</span>
+                </div>
             </div>
         </div>
     </div>
