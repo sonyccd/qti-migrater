@@ -4,13 +4,12 @@ import (
 	"encoding/xml"
 	"fmt"
 
-	"github.com/qti-migrator/internal/parser"
 	"github.com/qti-migrator/pkg/models"
 )
 
 type Parser21 struct{}
 
-func New() parser.Parser {
+func New() *Parser21 {
 	return &Parser21{}
 }
 
