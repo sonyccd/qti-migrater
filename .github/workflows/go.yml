@@ -11,6 +11,11 @@ on:
   pull_request:
     branches: [ "main" ]
 
+permissions:
+  contents: write  # Required for creating releases and tags
+  packages: write  # Optional: only if you plan to publish packages
+  actions: read    # Required for workflow execution
+
 jobs:
   test:
     strategy:
