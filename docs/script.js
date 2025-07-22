@@ -10,6 +10,11 @@ function openWindow(windowId) {
         window.style.zIndex = ++zIndex;
         centerWindow(window);
         activeWindow = window;
+        
+        // Special handling for help window - always show getting started tab
+        if (windowId === 'help') {
+            switchTab('help-tab-basics', 'help-content-basics');
+        }
     }
 }
 
