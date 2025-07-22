@@ -7,7 +7,8 @@
       "Bash(where go)",
       "Bash(make test:*)",
       "Bash(cmd /c:*)",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(go test:*)"
     ],
     "deny": []
   }

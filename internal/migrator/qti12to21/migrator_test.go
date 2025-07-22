@@ -1,7 +1,6 @@
 package qti12to21
 
 import (
-	"encoding/xml"
 	"strings"
 	"testing"
 

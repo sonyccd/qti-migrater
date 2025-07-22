@@ -2,7 +2,6 @@ package errors
 
 import (
 	"errors"
-	"strings"
 	"testing"
 )
 

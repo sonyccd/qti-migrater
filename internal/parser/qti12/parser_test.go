@@ -3,8 +3,6 @@ package qti12
 import (
 	"strings"
 	"testing"
-
-	"github.com/qti-migrator/pkg/models"
 )
 
 func TestParser12_Version(t *testing.T) {

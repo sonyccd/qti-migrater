@@ -131,7 +131,7 @@ func (p *Preprocessor) analyzeItem12to21(item *models.Item, report *AnalysisRepo
 					ItemID:      item.Ident,
 					ElementPath: fmt.Sprintf("item[@ident='%s']/resprocessing/respcondition", item.Ident),
 					OldValue:    fmt.Sprintf(`continue="%s"`, condition.Continue),
-					NewValue:    fmt.Sprintf(`continue="%s"`, condition.Continue == "yes"),
+					NewValue:    fmt.Sprintf(`continue="%t"`, condition.Continue == "yes"),
 					Action:      "transform",
 					Description: "Convert continue attribute from yes/no to true/false",
 				})

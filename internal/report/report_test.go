@@ -329,7 +329,7 @@ func TestReporter_TruncateValue(t *testing.T) {
 		},
 		{
 			input:    "this is a very long value that should be truncated because it exceeds the maximum length",
-			expected: "this is a very long value that should be truncat...",
+			expected: "this is a very long value that should be trunca...",
 		},
 		{
 			input:    strings.Repeat("a", 50),

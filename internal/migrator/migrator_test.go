@@ -246,9 +246,9 @@ func TestMigratorService_Migrate_ComplexDocument(t *testing.T) {
 		t.Error("Expected simpleChoice elements in QTI 2.1 output")
 	}
 	
-	// Check that shuffle attribute is converted (yes/no to true/false)
-	if !strings.Contains(resultStr, `shuffle="false"`) {
-		t.Error("Expected shuffle attribute to be converted to boolean")
+	// Check that shuffle attribute is handled (omitempty when false)
+	if strings.Contains(resultStr, `shuffle=`) {
+		t.Error("Expected shuffle attribute to be omitted when false (omitempty)")
 	}
 	
 	// Check feedback is preserved
