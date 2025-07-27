@@ -4,7 +4,7 @@ A command-line tool for migrating QTI (Question and Test Interoperability) files
 
 ## Features
 
-- **Version Support**: Currently supports migration from QTI 1.2 to QTI 2.1
+- **Version Support**: Supports migration from QTI 1.2 to QTI 2.1 and QTI 2.1 to QTI 3.0
 - **Preprocessing Analysis**: Analyze files before migration to identify potential issues
 - **Detailed Reports**: Configurable verbosity levels for migration reports
 - **Pipe Support**: Can be used in scripts with stdin/stdout support
@@ -32,6 +32,9 @@ go build -o qti-migrator cmd/qti-migrator/main.go
 ```bash
 # Migrate a file from QTI 1.2 to 2.1
 qti-migrator migrate -f 1.2 -t 2.1 -i input.xml -o output.xml
+
+# Migrate a file from QTI 2.1 to 3.0
+qti-migrator migrate -f 2.1 -t 3.0 -i input.xml -o output.xml
 
 # Use stdin/stdout for scripting
 cat input.xml | qti-migrator migrate -f 1.2 -t 2.1 > output.xml
@@ -71,6 +74,11 @@ Use with shell scripts for batch processing:
 # Process all QTI 1.2 files in a directory
 for file in *.xml; do
     qti-migrator migrate -f 1.2 -t 2.1 -i "$file" -o "migrated_$file"
+done
+
+# Process all QTI 2.1 files to QTI 3.0
+for file in *_v21.xml; do
+    qti-migrator migrate -f 2.1 -t 3.0 -i "$file" -o "${file/_v21/_v30}"
 done
 
 # Using find and xargs
@@ -122,9 +130,15 @@ WARNINGS
 - Generates response and outcome declarations
 - Validates and converts HTML content to XHTML
 
-### Future Support
+### QTI 2.1 to 3.0
 
-- QTI 2.1 to 3.0 (JSON format) - Coming soon
+- Updates XML namespaces to QTI 3.0 specification
+- Converts element names to QTI 3.0 conventions (e.g., `itemBody` → `qti-item-body`)
+- Transforms interaction types to new naming scheme (e.g., `choiceInteraction` → `qti-choice-interaction`)
+- Updates base types and attributes for QTI 3.0 compliance
+- Converts HTML class attributes to data-qti-class
+- Transforms object elements to qti-object elements
+- Migrates metadata structures to QTI 3.0 format
 
 ## Architecture
 
