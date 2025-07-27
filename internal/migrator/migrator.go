@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/qti-migrator/internal/migrator/qti12to21"
+	"github.com/qti-migrator/internal/migrator/qti21to30"
 	"github.com/qti-migrator/internal/parser"
 )
 
@@ -32,7 +33,7 @@ func (m *MigratorService) Migrate(content []byte, fromVersion, toVersion string)
 	if fromVersion == "1.2" && toVersion == "2.1" {
 		migrator = qti12to21.New()
 	} else if fromVersion == "2.1" && toVersion == "3.0" {
-		return nil, fmt.Errorf("QTI 2.1 to 3.0 migration not yet implemented")
+		migrator = qti21to30.New()
 	} else {
 		return nil, fmt.Errorf("unsupported migration path: %s to %s", fromVersion, toVersion)
 	}

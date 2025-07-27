@@ -14,7 +14,8 @@
       "Bash(git add:*)",
       "Bash(git restore:*)",
       "Bash(find:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(go build:*)"
     ],
     "deny": []
   }

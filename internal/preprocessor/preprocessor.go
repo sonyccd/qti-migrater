@@ -2,6 +2,7 @@ package preprocessor
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/qti-migrator/internal/parser"
 	"github.com/qti-migrator/pkg/models"
@@ -181,13 +182,132 @@ func (p *Preprocessor) analyzeMaterial12to21(itemID, path string, material *mode
 }
 
 func (p *Preprocessor) analyzeQTI21to30(doc *models.QTIDocument, report *AnalysisReport) {
-	report.Errors = append(report.Errors, Error{
-		ItemID:      "",
-		ElementPath: "",
-		Message:     "QTI 2.1 to 3.0 migration is not yet implemented",
-		Fatal:       true,
+	for _, item := range doc.Items {
+		p.analyzeItem21to30(&item, report)
+	}
+
+	if doc.Assessment != nil {
+		for _, section := range doc.Assessment.Sections {
+			for _, item := range section.Items {
+				p.analyzeItem21to30(&item, report)
+			}
+		}
+		
+		// Assessment structure will change in QTI 3.0
+		report.MigrationDetails = append(report.MigrationDetails, MigrationDetail{
+			ItemID:      doc.Assessment.Ident,
+			ElementPath: "assessment",
+			OldValue:    "assessment",
+			NewValue:    "qti-assessment-test",
+			Action:      "rename",
+			Description: "Assessment element renamed to qti-assessment-test in QTI 3.0",
+		})
+	}
+}
+
+func (p *Preprocessor) analyzeItem21to30(item *models.Item, report *AnalysisReport) {
+	// Item element naming changes
+	report.MigrationDetails = append(report.MigrationDetails, MigrationDetail{
+		ItemID:      item.Ident,
+		ElementPath: fmt.Sprintf("item[@ident='%s']", item.Ident),
+		OldValue:    "item",
+		NewValue:    "qti-assessment-item",
+		Action:      "rename",
+		Description: "Item element renamed to qti-assessment-item in QTI 3.0",
 	})
-	report.IncompatibleItems = report.TotalItems
+
+	// ItemBody changes
+	if item.ItemBody != nil {
+		report.MigrationDetails = append(report.MigrationDetails, MigrationDetail{
+			ItemID:      item.Ident,
+			ElementPath: fmt.Sprintf("item[@ident='%s']/itemBody", item.Ident),
+			OldValue:    "itemBody",
+			NewValue:    "qti-item-body",
+			Action:      "rename",
+			Description: "ItemBody element renamed to qti-item-body in QTI 3.0",
+		})
+
+		// Analyze interactions
+		for _, interaction := range item.ItemBody.ChoiceInteraction {
+			report.MigrationDetails = append(report.MigrationDetails, MigrationDetail{
+				ItemID:      item.Ident,
+				ElementPath: fmt.Sprintf("item[@ident='%s']/itemBody/choiceInteraction[@responseIdentifier='%s']", item.Ident, interaction.ResponseIdent),
+				OldValue:    "choiceInteraction",
+				NewValue:    "qti-choice-interaction",
+				Action:      "rename",
+				Description: "Interaction elements prefixed with 'qti-' in QTI 3.0",
+			})
+
+			report.MigrationDetails = append(report.MigrationDetails, MigrationDetail{
+				ItemID:      item.Ident,
+				ElementPath: fmt.Sprintf("item[@ident='%s']/itemBody/choiceInteraction/simpleChoice", item.Ident),
+				OldValue:    "simpleChoice",
+				NewValue:    "qti-simple-choice",
+				Action:      "rename",
+				Description: "SimpleChoice elements renamed to qti-simple-choice in QTI 3.0",
+			})
+		}
+
+		// Check for HTML content that needs updating
+		for _, para := range item.ItemBody.P {
+			if strings.Contains(para.Content, "class=") && p.verbosity >= 2 {
+				report.Warnings = append(report.Warnings, Warning{
+					ItemID:      item.Ident,
+					ElementPath: fmt.Sprintf("item[@ident='%s']/itemBody/p", item.Ident),
+					Message:     "HTML class attributes found in content",
+					Suggestion:  "Class attributes will be converted to data-qti-class in QTI 3.0",
+				})
+			}
+		}
+	}
+
+	// Response declaration changes
+	for _, decl := range item.ResponseDecl {
+		report.MigrationDetails = append(report.MigrationDetails, MigrationDetail{
+			ItemID:      item.Ident,
+			ElementPath: fmt.Sprintf("item[@ident='%s']/responseDeclaration[@identifier='%s']", item.Ident, decl.Identifier),
+			OldValue:    "responseDeclaration",
+			NewValue:    "qti-response-declaration",
+			Action:      "rename",
+			Description: "Response declaration renamed in QTI 3.0",
+		})
+
+		// Base type changes
+		if decl.BaseType == "pair" {
+			report.MigrationDetails = append(report.MigrationDetails, MigrationDetail{
+				ItemID:      item.Ident,
+				ElementPath: fmt.Sprintf("item[@ident='%s']/responseDeclaration[@identifier='%s']/@baseType", item.Ident, decl.Identifier),
+				OldValue:    "pair",
+				NewValue:    "directedPair",
+				Action:      "transform",
+				Description: "BaseType 'pair' renamed to 'directedPair' in QTI 3.0",
+			})
+		}
+	}
+
+	// Outcome declaration changes
+	for _, decl := range item.OutcomeDecl {
+		report.MigrationDetails = append(report.MigrationDetails, MigrationDetail{
+			ItemID:      item.Ident,
+			ElementPath: fmt.Sprintf("item[@ident='%s']/outcomeDeclaration[@identifier='%s']", item.Ident, decl.Identifier),
+			OldValue:    "outcomeDeclaration",
+			NewValue:    "qti-outcome-declaration",
+			Action:      "rename",
+			Description: "Outcome declaration renamed in QTI 3.0",
+		})
+	}
+
+	// Metadata changes
+	if item.Metadata != nil && item.Metadata.QTIMetadata != nil {
+		report.MigrationDetails = append(report.MigrationDetails, MigrationDetail{
+			ItemID:      item.Ident,
+			ElementPath: fmt.Sprintf("item[@ident='%s']/metadata/qtimetadata", item.Ident),
+			OldValue:    "qtimetadata",
+			NewValue:    "qti-metadata-container",
+			Action:      "rename",
+			Description: "QTI metadata container renamed in QTI 3.0",
+		})
+	}
 }
 
 func isValidQTI21InteractionType(interactionType string) bool {

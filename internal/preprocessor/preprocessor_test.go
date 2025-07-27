@@ -109,24 +109,29 @@ func TestPreprocessor_Analyze_QTI21to30(t *testing.T) {
 		t.Fatalf("Analysis failed: %v", err)
 	}
 	
-	if !report.HasErrors() {
-		t.Error("Expected fatal error for unsupported migration, but got none")
+	if report.HasErrors() {
+		t.Error("Expected no fatal errors for QTI 2.1 to 3.0 migration, but got some")
 	}
 	
-	if report.IncompatibleItems != 1 {
-		t.Errorf("Expected 1 incompatible item, got %d", report.IncompatibleItems)
+	if report.IncompatibleItems != 0 {
+		t.Errorf("Expected 0 incompatible items, got %d", report.IncompatibleItems)
 	}
 	
-	// Check that error message is appropriate
-	found := false
-	for _, err := range report.Errors {
-		if err.Fatal && err.Message == "QTI 2.1 to 3.0 migration is not yet implemented" {
-			found = true
+	// Check that migration details are present
+	if len(report.MigrationDetails) == 0 {
+		t.Error("Expected migration details for QTI 2.1 to 3.0 migration")
+	}
+	
+	// Check for expected migration details
+	foundItemRename := false
+	for _, detail := range report.MigrationDetails {
+		if detail.Action == "rename" && detail.OldValue == "item" && detail.NewValue == "qti-assessment-item" {
+			foundItemRename = true
 			break
 		}
 	}
-	if !found {
-		t.Error("Expected fatal error message for unsupported migration")
+	if !foundItemRename {
+		t.Error("Expected item element rename migration detail")
 	}
 }
 

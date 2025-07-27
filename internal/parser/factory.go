@@ -16,6 +16,9 @@ func GetParser(version string) (Parser, error) {
 		return qti12.New(), nil
 	case strings.HasPrefix(version, "2.1") || strings.HasPrefix(version, "2.2"):
 		return qti21.New(), nil
+	case strings.HasPrefix(version, "3.0"):
+		// For now, QTI 3.0 uses same parser as 2.1 since XML structure is similar
+		return qti21.New(), nil
 	default:
 		return nil, fmt.Errorf("unsupported QTI version: %s", version)
 	}

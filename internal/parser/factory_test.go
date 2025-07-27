@@ -40,7 +40,7 @@ func TestGetParser_QTI21(t *testing.T) {
 }
 
 func TestGetParser_UnsupportedVersion(t *testing.T) {
-	unsupportedVersions := []string{"1.0", "1.1", "3.0", "4.0", "invalid", ""}
+	unsupportedVersions := []string{"1.0", "1.1", "4.0", "invalid", ""}
 	
 	for _, version := range unsupportedVersions {
 		parser, err := GetParser(version)
@@ -59,6 +59,24 @@ func TestGetParser_UnsupportedVersion(t *testing.T) {
 		if parser != nil {
 			t.Errorf("Expected nil parser for unsupported version '%s', got: %v", 
 				version, parser)
+		}
+	}
+}
+
+func TestGetParser_QTI30(t *testing.T) {
+	testCases := []string{"3.0", "3.0.0", "3.0.1"}
+	
+	for _, version := range testCases {
+		parser, err := GetParser(version)
+		if err != nil {
+			t.Errorf("Failed to get parser for version %s: %v", version, err)
+			continue
+		}
+		
+		// QTI 3.0 uses the same parser as 2.1 for now
+		if parser.Version() != "2.1" {
+			t.Errorf("Expected parser version '2.1' for QTI 3.0, got '%s' for input version '%s'", 
+				parser.Version(), version)
 		}
 	}
 }

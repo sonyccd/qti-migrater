@@ -122,25 +122,78 @@ func TestMigratorService_Migrate_UnsupportedMigrationPath(t *testing.T) {
 	}
 }
 
-func TestMigratorService_Migrate_QTI21to30_NotImplemented(t *testing.T) {
+func TestMigratorService_Migrate_QTI21to30(t *testing.T) {
 	qti21XML := `<?xml version="1.0" encoding="UTF-8"?>
 <questestinterop version="2.1">
 	<item ident="q001" title="Test Question">
+		<responseDeclaration identifier="RESPONSE" cardinality="single" baseType="identifier">
+			<correctResponse>
+				<value>B</value>
+			</correctResponse>
+		</responseDeclaration>
+		<outcomeDeclaration identifier="SCORE" cardinality="single" baseType="float">
+			<defaultValue>
+				<value>0.0</value>
+			</defaultValue>
+		</outcomeDeclaration>
 		<itemBody>
 			<p>What is 2 + 2?</p>
+			<choiceInteraction responseIdentifier="RESPONSE" shuffle="true" maxChoices="1">
+				<simpleChoice identifier="A">3</simpleChoice>
+				<simpleChoice identifier="B">4</simpleChoice>
+				<simpleChoice identifier="C">5</simpleChoice>
+			</choiceInteraction>
 		</itemBody>
 	</item>
 </questestinterop>`
 
 	m := New()
-	_, err := m.Migrate([]byte(qti21XML), "2.1", "3.0")
+	result, err := m.Migrate([]byte(qti21XML), "2.1", "3.0")
 	
-	if err == nil {
-		t.Error("Expected error for unimplemented migration, but got none")
+	if err != nil {
+		t.Fatalf("Migration failed: %v", err)
 	}
 	
-	if !strings.Contains(err.Error(), "QTI 2.1 to 3.0 migration not yet implemented") {
-		t.Errorf("Expected not implemented error, got: %v", err)
+	if len(result) == 0 {
+		t.Fatal("Expected migration result to have content")
+	}
+	
+	resultStr := string(result)
+	
+	// Check that XML header is present
+	if !strings.Contains(resultStr, `<?xml version="1.0" encoding="UTF-8"?>`) {
+		t.Error("Expected XML header in result")
+	}
+	
+	// Check QTI 3.0 namespace
+	if !strings.Contains(resultStr, `xmlns="http://www.imsglobal.org/xsd/imsqtiasi_v3p0"`) {
+		t.Error("Expected QTI 3.0 namespace")
+	}
+	
+	// Check version was updated or it's a QTI 3.0 structure (which might not have version attr)
+	if !strings.Contains(resultStr, `version="3.0"`) && !strings.Contains(resultStr, `qti-assessment-item`) {
+		t.Error("Expected version to be updated to 3.0 or QTI 3.0 structure")
+	}
+	
+	// Check that QTI 3.0 elements are present
+	if !strings.Contains(resultStr, `<qti-item-body>`) {
+		t.Error("Expected qti-item-body element in QTI 3.0 output")
+	}
+	
+	if !strings.Contains(resultStr, `<qti-choice-interaction`) {
+		t.Error("Expected qti-choice-interaction in QTI 3.0 output")
+	}
+	
+	if !strings.Contains(resultStr, `<qti-simple-choice`) {
+		t.Error("Expected qti-simple-choice in QTI 3.0 output")
+	}
+	
+	if !strings.Contains(resultStr, `<qti-response-declaration`) {
+		t.Error("Expected qti-response-declaration in QTI 3.0 output")
+	}
+	
+	if !strings.Contains(resultStr, `<qti-outcome-declaration`) {
+		t.Error("Expected qti-outcome-declaration in QTI 3.0 output")
 	}
 }
 
