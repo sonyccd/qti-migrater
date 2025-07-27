@@ -81,6 +81,7 @@ type QTI3ResponseDecl struct {
 	Cardinality     string                `xml:"cardinality,attr"`
 	BaseType        string                `xml:"base-type,attr,omitempty"`
 	CorrectResponse *QTI3CorrectResponse  `xml:"qti-correct-response,omitempty"`
+	Mapping         *QTI3Mapping          `xml:"qti-mapping,omitempty"`
 }
 
 type QTI3CorrectResponse struct {
@@ -91,6 +92,20 @@ type QTI3CorrectResponse struct {
 type QTI3Value struct {
 	XMLName xml.Name `xml:"qti-value"`
 	Content string   `xml:",chardata"`
+}
+
+type QTI3Mapping struct {
+	XMLName      xml.Name       `xml:"qti-mapping"`
+	LowerBound   float64        `xml:"lower-bound,attr,omitempty"`
+	UpperBound   float64        `xml:"upper-bound,attr,omitempty"`
+	DefaultValue float64        `xml:"default-value,attr,omitempty"`
+	MapEntry     []QTI3MapEntry `xml:"qti-map-entry"`
+}
+
+type QTI3MapEntry struct {
+	XMLName     xml.Name `xml:"qti-map-entry"`
+	MapKey      string   `xml:"map-key,attr"`
+	MappedValue float64  `xml:"mapped-value,attr"`
 }
 
 type QTI3OutcomeDecl struct {
@@ -132,12 +147,13 @@ func (m *Migrator21to30) Migrate(doc interface{}) ([]byte, error) {
 		return nil, fmt.Errorf("invalid document type for QTI 2.1 to 3.0 migration")
 	}
 
-	// For simplicity, we'll handle single item documents
+	// For simplicity, we'll handle single item documents with the proper QTI 3.0 structure
 	if len(qtiDoc.Items) == 1 && qtiDoc.Assessment == nil {
 		return m.migrateSingleItem(&qtiDoc.Items[0])
 	}
 
-	// For documents with assessments or multiple items, use the full structure
+	// For documents with assessments or multiple items, create a proper QTI 3.0 structure
+	// But for now, just migrate using the document structure and apply QTI 3.0 element names
 	migratedDoc := m.migrateDocument(qtiDoc)
 
 	output, err := xml.MarshalIndent(migratedDoc, "", "  ")
@@ -747,6 +763,20 @@ func (m *Migrator21to30) migrateResponseDeclarationToQTI3(decl *models.ResponseD
 		for _, value := range decl.CorrectResponse.Value {
 			qti3Decl.CorrectResponse.Value = append(qti3Decl.CorrectResponse.Value, QTI3Value{
 				Content: value,
+			})
+		}
+	}
+
+	if decl.Mapping != nil {
+		qti3Decl.Mapping = &QTI3Mapping{
+			LowerBound:   decl.Mapping.LowerBound,
+			UpperBound:   decl.Mapping.UpperBound,
+			DefaultValue: decl.Mapping.DefaultValue,
+		}
+		for _, entry := range decl.Mapping.MapEntry {
+			qti3Decl.Mapping.MapEntry = append(qti3Decl.Mapping.MapEntry, QTI3MapEntry{
+				MapKey:      entry.MapKey,
+				MappedValue: entry.MappedValue,
 			})
 		}
 	}
