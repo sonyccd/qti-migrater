@@ -15,7 +15,10 @@
       "Bash(git restore:*)",
       "Bash(find:*)",
       "Bash(ls:*)",
-      "Bash(go build:*)"
+      "Bash(go build:*)",
+      "Bash(git checkout:*)",
+      "Bash(git stash:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }
