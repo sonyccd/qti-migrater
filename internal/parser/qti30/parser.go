@@ -117,11 +117,7 @@ func convertMapping30ToGeneric(m *models.Mapping30) *models.Mapping {
 	}
 	entries := make([]models.MapEntry, len(m.MapEntry))
 	for i, e := range m.MapEntry {
-		entries[i] = models.MapEntry{
-			XMLName:     e.XMLName,
-			MapKey:      e.MapKey,
-			MappedValue: e.MappedValue,
-		}
+		entries[i] = models.MapEntry(e)
 	}
 	return &models.Mapping{
 		XMLName:      m.XMLName,

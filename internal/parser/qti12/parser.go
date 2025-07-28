@@ -105,13 +105,7 @@ func convertSections12ToGeneric(sections []models.Section12) []models.Section {
 func convertFeedback12ToGeneric(feedbacks []models.Feedback12) []models.Feedback {
 	genericFeedbacks := make([]models.Feedback, len(feedbacks))
 	for i, feedback := range feedbacks {
-		genericFeedbacks[i] = models.Feedback{
-			XMLName:  feedback.XMLName,
-			Ident:    feedback.Ident,
-			Title:    feedback.Title,
-			FlowMat:  feedback.FlowMat,
-			Material: feedback.Material,
-		}
+		genericFeedbacks[i] = models.Feedback(feedback)
 	}
 	return genericFeedbacks
 }
