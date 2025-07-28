@@ -73,9 +73,9 @@ func TestGetParser_QTI30(t *testing.T) {
 			continue
 		}
 		
-		// QTI 3.0 uses the same parser as 2.1 for now
-		if parser.Version() != "2.1" {
-			t.Errorf("Expected parser version '2.1' for QTI 3.0, got '%s' for input version '%s'", 
+		// QTI 3.0 now has its own parser
+		if parser.Version() != "3.0" {
+			t.Errorf("Expected parser version '3.0' for QTI 3.0, got '%s' for input version '%s'", 
 				parser.Version(), version)
 		}
 	}

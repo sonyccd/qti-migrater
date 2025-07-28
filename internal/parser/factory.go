@@ -6,6 +6,7 @@ import (
 
 	"github.com/qti-migrator/internal/parser/qti12"
 	"github.com/qti-migrator/internal/parser/qti21"
+	"github.com/qti-migrator/internal/parser/qti30"
 )
 
 func GetParser(version string) (Parser, error) {
@@ -17,8 +18,7 @@ func GetParser(version string) (Parser, error) {
 	case strings.HasPrefix(version, "2.1") || strings.HasPrefix(version, "2.2"):
 		return qti21.New(), nil
 	case strings.HasPrefix(version, "3.0"):
-		// For now, QTI 3.0 uses same parser as 2.1 since XML structure is similar
-		return qti21.New(), nil
+		return qti30.New(), nil
 	default:
 		return nil, fmt.Errorf("unsupported QTI version: %s", version)
 	}
