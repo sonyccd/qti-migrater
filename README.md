@@ -10,6 +10,7 @@ A command-line tool for migrating QTI (Question and Test Interoperability) files
 - **Pipe Support**: Can be used in scripts with stdin/stdout support
 - **Error Handling**: Clear error messages for migration issues
 - **Modular Architecture**: Easy to extend for new QTI versions
+- **Version-Specific Models**: Clean separation of QTI version structures for better maintainability
 
 ## Installation
 
@@ -144,7 +145,16 @@ WARNINGS
 
 The tool is built with a modular architecture:
 
-- **Parser**: Handles parsing of different QTI versions
+- **Parser**: Handles parsing of different QTI versions with version-specific parsers
+  - `qti12.Parser12` for QTI 1.2 documents
+  - `qti21.Parser21` for QTI 2.1/2.2 documents  
+  - `qti30.Parser30` for QTI 3.0 documents
+- **Models**: Version-specific data structures
+  - `models/common.go` - Shared structures (LOM metadata, materials)
+  - `models/qti12.go` - QTI 1.2 specific structures
+  - `models/qti21.go` - QTI 2.1/2.2 specific structures
+  - `models/qti30.go` - QTI 3.0 specific structures
+  - `models/qti.go` - Generic structures for backward compatibility
 - **Preprocessor**: Analyzes documents for migration compatibility
 - **Migrator**: Performs the actual migration transformations
 - **Reporter**: Generates human-readable reports
